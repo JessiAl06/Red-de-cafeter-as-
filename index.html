@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red FES Acatlán — Cafeterías y Módulos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2333;
+    --border: #2a3045;
+    --text: #e8eaf0;
+    --text2: #8890a8;
+    --text3: #4a5168;
+    --blue: #4d8ef0;
+    --blue-dim: #1e2f4a;
+    --green: #3ecf8e;
+    --green-dim: #0f2a1e;
+    --orange: #f5a623;
+    --orange-dim: #2e2010;
+    --red: #e05c5c;
+    --red-dim: #2a1515;
+    --purple: #9b7fee;
+    --accent: #4d8ef0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+  }
+  header h1 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  header span {
+    font-size: 13px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+  }
+  .badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+  }
+  .badge-blue { background: var(--blue-dim); color: var(--blue); }
+  .badge-green { background: var(--green-dim); color: var(--green); }
+  .badge-orange { background: var(--orange-dim); color: var(--orange); }
+  .badge-red { background: var(--red-dim); color: var(--red); }
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 61px);
+  }
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-section h3 {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ctrl-group { margin-bottom: 12px; }
+  .ctrl-group label {
+    display: block;
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  select {
+    width: 100%;
+    padding: 7px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    outline: none;
+  }
+  select:focus { border-color: var(--blue); }
+  .btn {
+    width: 100%;
+    padding: 9px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-bottom: 6px;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn:active { transform: scale(0.98); }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-green { background: var(--green); color: #0a1a12; }
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .result-panel {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+    min-height: 80px;
+  }
+  .result-panel strong { color: var(--text); }
+  .result-panel .path-node {
+    display: inline-block;
+    background: var(--blue-dim);
+    color: var(--blue);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    margin: 2px 1px;
+  }
+  .result-panel .flow-tag {
+    display: inline-block;
+    background: var(--green-dim);
+    color: var(--green);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    margin: 2px 1px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row span:first-child { color: var(--text2); }
+  .stat-row span:last-child { color: var(--text); font-family: 'DM Mono', monospace; font-weight: 500; }
+  .canvas-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  canvas {
+    position: absolute;
+    top: 0; left: 0;
+    cursor: grab;
+  }
+  canvas:active { cursor: grabbing; }
+  .canvas-hint {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--text3);
+    pointer-events: none;
+  }
+  .node-tooltip {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    pointer-events: none;
+    display: none;
+    z-index: 10;
+    min-width: 160px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .node-tooltip .tt-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .node-tooltip .tt-sub { color: var(--text2); margin-bottom: 6px; }
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 10px 16px 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s;
+  }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab:hover:not(.active) { color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Red FES Acatlán</h1>
+    <span>Optimización de rutas · Cafeterías y módulos comidísticos</span>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+    <span class="badge badge-blue">15 Edificios</span>
+    <span class="badge badge-green">7 Cafeterías</span>
+    <span class="badge badge-orange">3 Módulos</span>
+    <span class="badge badge-red">5 Explanadas</span>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <h3>Leyenda</h3>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Edificio (A1–A15)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Cafetería (C1–C7)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Módulo comidístico</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Explanada / Tránsito</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="tabs" style="padding:0;border:none;background:none;margin-bottom:12px">
+        <button class="tab active" onclick="switchAlgo('dijkstra',this)">Ruta más corta</button>
+        <button class="tab" onclick="switchAlgo('flow',this)">Flujo máximo</button>
+      </div>
+      <div id="algo-dijkstra" class="tab-content active">
+        <div class="ctrl-group">
+          <label>Origen</label>
+          <select id="dOri"></select>
+        </div>
+        <div class="ctrl-group">
+          <label>Destino</label>
+          <select id="dDest"></select>
+        </div>
+        <button class="btn btn-blue" onclick="runDijkstra()">Calcular ruta más corta</button>
+        <button class="btn btn-ghost" onclick="clearAll()">Limpiar</button>
+        <div class="result-panel" id="dResult">Selecciona origen y destino.</div>
+      </div>
+      <div id="algo-flow" class="tab-content">
+        <div class="ctrl-group">
+          <label>Fuente (origen)</label>
+          <select id="fSrc"></select>
+        </div>
+        <div class="ctrl-group">
+          <label>Sumidero (destino)</label>
+          <select id="fSnk"></select>
+        </div>
+        <button class="btn btn-green" onclick="runMaxFlow()">Calcular flujo máximo</button>
+        <button class="btn btn-ghost" onclick="clearAll()">Limpiar</button>
+        <div class="result-panel" id="fResult">Selecciona fuente y sumidero.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Estadísticas de la red</h3>
+      <div class="stat-row"><span>Total nodos</span><span>30</span></div>
+      <div class="stat-row"><span>Total arcos</span><span id="statEdges">0</span></div>
+      <div class="stat-row"><span>Edificios</span><span>15</span></div>
+      <div class="stat-row"><span>Cafeterías</span><span>7</span></div>
+      <div class="stat-row"><span>Módulos</span><span>3</span></div>
+      <div class="stat-row"><span>Explanadas</span><span>5</span></div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Nodo seleccionado</h3>
+      <div class="result-panel" id="nodeInfo" style="min-height:60px">Haz clic en un nodo.</div>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="c"></canvas>
+    <div class="canvas-hint">Arrastra para mover · Scroll para zoom · Clic en nodo para info</div>
+    <div class="node-tooltip" id="tooltip">
+      <div class="tt-title" id="tt-name"></div>
+      <div class="tt-sub" id="tt-type"></div>
+      <div id="tt-conns"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NODES = [
+  {id:'A1',type:'edificio',x:80,y:520},{id:'A2',type:'edificio',x:180,y:520},
+  {id:'A3',type:'edificio',x:280,y:520},{id:'A4',type:'edificio',x:100,y:400},
+  {id:'A5',type:'edificio',x:200,y:400},{id:'A6',type:'edificio',x:300,y:400},
+  {id:'A7',type:'edificio',x:400,y:400},{id:'A8',type:'edificio',x:500,y:400},
+  {id:'A9',type:'edificio',x:130,y:280},{id:'A10',type:'edificio',x:230,y:280},
+  {id:'A11',type:'edificio',x:330,y:280},{id:'A12',type:'edificio',x:430,y:280},
+  {id:'A13',type:'edificio',x:530,y:280},{id:'A14',type:'edificio',x:630,y:280},
+  {id:'A15',type:'edificio',x:730,y:280},
+  {id:'C1',type:'cafeteria',x:180,y:600},{id:'C2',type:'cafeteria',x:200,y:320},
+  {id:'C3',type:'cafeteria',x:500,y:320},{id:'C4',type:'cafeteria',x:730,y:200},
+  {id:'C5',type:'cafeteria',x:330,y:200},{id:'C6',type:'cafeteria',x:80,y:200},
+  {id:'C7',type:'cafeteria',x:700,y:360},
+  {id:'MC3',type:'modulo',x:280,y:200},{id:'MC5',type:'modulo',x:480,y:320},
+  {id:'MC6',type:'modulo',x:300,y:340},
+  {id:'ESJ',type:'transito',x:250,y:460},{id:'EA8',type:'transito',x:480,y:460},
+  {id:'EA4',type:'transito',x:100,y:460},{id:'EDER',type:'transito',x:130,y:140},
+  {id:'ECC',type:'transito',x:750,y:200}
+];
+
+const EDGES = [
+  {from:'A1',to:'A2',dist:80},{from:'A2',to:'A3',dist:70},
+  {from:'A1',to:'A4',dist:70},{from:'A2',to:'A5',dist:70},
+  {from:'A3',to:'A6',dist:70},{from:'A4',to:'A5',dist:80},
+  {from:'A5',to:'A6',dist:80},{from:'A6',to:'A7',dist:80},
+  {from:'A7',to:'A8',dist:80},{from:'A4',to:'A9',dist:70},
+  {from:'A5',to:'A10',dist:70},{from:'A6',to:'A11',dist:70},
+  {from:'A7',to:'A12',dist:70},{from:'A8',to:'A13',dist:70},
+  {from:'A9',to:'A10',dist:80},{from:'A10',to:'A11',dist:80},
+  {from:'A11',to:'A12',dist:80},{from:'A12',to:'A13',dist:80},
+  {from:'A13',to:'A14',dist:80},{from:'A14',to:'A15',dist:80},
+  {from:'A1',to:'C1',dist:60},{from:'A2',to:'C1',dist:50},
+  {from:'A5',to:'C2',dist:55},{from:'A9',to:'C2',dist:60},
+  {from:'A8',to:'C3',dist:45},{from:'A15',to:'C4',dist:55},
+  {from:'A13',to:'C4',dist:65},{from:'A10',to:'C5',dist:60},
+  {from:'A9',to:'C6',dist:45},{from:'A14',to:'C7',dist:50},
+  {from:'A8',to:'MC5',dist:40},{from:'A9',to:'MC5',dist:35},
+  {from:'A6',to:'MC6',dist:40},{from:'A3',to:'MC6',dist:55},
+  {from:'A10',to:'MC3',dist:50},{from:'MC3',to:'C5',dist:45},
+  {from:'A4',to:'EA4',dist:35},{from:'A8',to:'EA8',dist:35},
+  {from:'A6',to:'ESJ',dist:45},{from:'A3',to:'ESJ',dist:60},
+  {from:'MC3',to:'ESJ',dist:40},{from:'A9',to:'EDER',dist:50},
+  {from:'C6',to:'EDER',dist:55},{from:'A15',to:'ECC',dist:50},
+  {from:'A14',to:'ECC',dist:60},{from:'ESJ',to:'EA4',dist:70},
+  {from:'EA4',to:'EA8',dist:80},{from:'EA8',to:'EDER',dist:65},
+  {from:'EDER',to:'ECC',dist:90}
+];
+
+document.getElementById('statEdges').textContent = EDGES.length;
+
+const nodeColors = {
+  edificio:{fill:'#1e2f4a',stroke:'#4d8ef0',text:'#7eb8f7'},
+  cafeteria:{fill:'#0f2a1e',stroke:'#3ecf8e',text:'#3ecf8e'},
+  modulo:{fill:'#2e2010',stroke:'#f5a623',text:'#f5a623'},
+  transito:{fill:'#2a1515',stroke:'#e05c5c',text:'#e05c5c'}
+};
+const typeLabel = {edificio:'Edificio',cafeteria:'Cafetería',modulo:'Módulo comidístico',transito:'Explanada / Tránsito'};
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W,H,scale=1,ox=0,oy=0,dragging=false,lastMX,lastMY;
+let highlightPath=[],flowMap={},selectedNode=null;
+
+function resize(){
+  const wrap = canvas.parentElement;
+  W = canvas.width = wrap.clientWidth;
+  H = canvas.height = wrap.clientHeight;
+  draw();
+}
+window.addEventListener('resize', resize);
+
+function toScreen(x,y){ return {sx:x*scale+ox, sy:y*scale+oy}; }
+function toWorld(sx,sy){ return {x:(sx-ox)/scale, y:(sy-oy)/scale}; }
+function nodeAt(mx,my){
+  const {x,y}=toWorld(mx,my);
+  return NODES.find(n=>Math.hypot(n.x-x,n.y-y)<18/scale);
+}
+
+canvas.addEventListener('mousedown',e=>{
+  const n=nodeAt(e.offsetX,e.offsetY);
+  if(n){ showNodeInfo(n); return; }
+  dragging=true; lastMX=e.offsetX; lastMY=e.offsetY;
+});
+canvas.addEventListener('mousemove',e=>{
+  if(dragging){ ox+=e.offsetX-lastMX; oy+=e.offsetY-lastMY; lastMX=e.offsetX; lastMY=e.offsetY; draw(); return; }
+  const n=nodeAt(e.offsetX,e.offsetY);
+  const tt=document.getElementById('tooltip');
+  if(n){
+    canvas.style.cursor='pointer';
+    document.getElementById('tt-name').textContent=n.id;
+    document.getElementById('tt-type').textContent=typeLabel[n.type];
+    document.getElementById('tt-conns').textContent=EDGES.filter(ed=>ed.from===n.id||ed.to===n.id).length+' conexiones';
+    tt.style.display='block';
+    tt.style.left=(e.offsetX+14)+'px';
+    tt.style.top=(e.offsetY-10)+'px';
+  } else {
+    canvas.style.cursor='grab';
+    tt.style.display='none';
+  }
+});
+canvas.addEventListener('mouseup',()=>dragging=false);
+canvas.addEventListener('mouseleave',()=>{ dragging=false; document.getElementById('tooltip').style.display='none'; });
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const factor=e.deltaY<0?1.1:0.9;
+  const mx=e.offsetX,my=e.offsetY;
+  ox=mx-(mx-ox)*factor; oy=my-(my-oy)*factor; scale*=factor; draw();
+},{passive:false});
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  EDGES.forEach(e=>{
+    const a=NODES.find(n=>n.id===e.from),b=NODES.find(n=>n.id===e.to);
+    if(!a||!b) return;
+    const pa=toScreen(a.x,a.y),pb=toScreen(b.x,b.y);
+    const inPath=highlightPath.length>1&&highlightPath.some((_,i)=>i<highlightPath.length-1&&((highlightPath[i]===e.from&&highlightPath[i+1]===e.to)||(highlightPath[i]===e.to&&highlightPath[i+1]===e.from)));
+    const fv=flowMap[e.from+'-'+e.to]||flowMap[e.to+'-'+e.from]||0;
+    ctx.beginPath(); ctx.moveTo(pa.sx,pa.sy); ctx.lineTo(pb.sx,pb.sy);
+    if(inPath){ctx.strokeStyle='#e05c5c';ctx.lineWidth=3;}
+    else if(fv>0){ctx.strokeStyle='#3ecf8e';ctx.lineWidth=2.5;}
+    else{ctx.strokeStyle='#2a3045';ctx.lineWidth=1;}
+    ctx.stroke();
+    const mx=(pa.sx+pb.sx)/2,my=(pa.sy+pb.sy)/2;
+    ctx.font=`${Math.max(9,10*scale)}px DM Mono,monospace`;
+    ctx.fillStyle=inPath?'#e05c5c':fv>0?'#3ecf8e':'#3a4460';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(fv>0?`${fv}`:`${e.dist}m`,mx,my-7*scale);
+  });
+  NODES.forEach(n=>{
+    const {sx,sy}=toScreen(n.x,n.y);
+    const c=nodeColors[n.type];
+    const r=n.type==='edificio'?14:16;
+    const inPath=highlightPath.includes(n.id);
+    const isSel=selectedNode&&selectedNode.id===n.id;
+    ctx.beginPath();
+    if(n.type==='cafeteria'||n.type==='modulo'){ ctx.arc(sx,sy,r*scale,0,2*Math.PI); }
+    else { const rr=r*scale; ctx.roundRect(sx-rr,sy-rr*0.7,rr*2,rr*1.4,4*scale); }
+    ctx.fillStyle=inPath?'#e05c5c':isSel?'#2a3f6a':c.fill;
+    ctx.strokeStyle=inPath?'#ff8080':isSel?'#7eb8f7':c.stroke;
+    ctx.lineWidth=(inPath||isSel)?2:1;
+    ctx.fill(); ctx.stroke();
+    ctx.font=`${Math.max(8,10*scale)}px DM Sans,sans-serif`;
+    ctx.fillStyle=inPath?'#fff':c.text;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(n.id,sx,sy);
+  });
+}
+
+function showNodeInfo(n){
+  selectedNode=n;
+  const conns=EDGES.filter(e=>e.from===n.id||e.to===n.id);
+  const neighbors=conns.map(e=>e.from===n.id?e.to:e.from);
+  document.getElementById('nodeInfo').innerHTML=`<strong>${n.id}</strong> — ${typeLabel[n.type]}<br>
+    <span style="color:var(--text3);font-size:11px">${conns.length} conexiones</span><br><br>
+    ${neighbors.map(nb=>`<span class="path-node">${nb}</span>`).join('')}`;
+  draw();
+}
+
+function dijkstra(src,dst){
+  const dist={},prev={},vis=new Set();
+  NODES.forEach(n=>dist[n.id]=Infinity); dist[src]=0;
+  const pq=[{id:src,d:0}];
+  while(pq.length){
+    pq.sort((a,b)=>a.d-b.d);
+    const {id}=pq.shift();
+    if(vis.has(id)) continue; vis.add(id);
+    EDGES.forEach(e=>{
+      let nb=null,w=0;
+      if(e.from===id){nb=e.to;w=e.dist;} else if(e.to===id){nb=e.from;w=e.dist;}
+      if(nb&&!vis.has(nb)&&dist[id]+w<dist[nb]){ dist[nb]=dist[id]+w; prev[nb]=id; pq.push({id:nb,d:dist[nb]}); }
+    });
+  }
+  if(dist[dst]===Infinity) return {path:[],cost:Infinity};
+  const path=[]; let cur=dst;
+  while(cur){path.unshift(cur);cur=prev[cur];}
+  return {path,cost:dist[dst]};
+}
+
+function runDijkstra(){
+  const src=document.getElementById('dOri').value, dst=document.getElementById('dDest').value;
+  const {path,cost}=dijkstra(src,dst);
+  highlightPath=path; flowMap={}; draw();
+  const el=document.getElementById('dResult');
+  if(!path.length){el.innerHTML='<span style="color:var(--red)">No existe ruta.</span>';return;}
+  el.innerHTML=`<strong>Ruta: ${src} → ${dst}</strong><br><br>
+    ${path.map(n=>`<span class="path-node">${n}</span>`).join(' → ')}<br><br>
+    <strong>Distancia total:</strong> ${cost} m<br>
+    <strong>Nodos recorridos:</strong> ${path.length}`;
+}
+
+function maxFlow(src,snk){
+  const cap={};
+  EDGES.forEach(e=>{ cap[e.from+'>'+e.to]=(cap[e.from+'>'+e.to]||0)+30; cap[e.to+'>'+e.from]=(cap[e.to+'>'+e.from]||0)+30; });
+  const rg={}; Object.keys(cap).forEach(k=>rg[k]=cap[k]);
+  const adj={}; NODES.forEach(n=>adj[n.id]=[]);
+  EDGES.forEach(e=>{ adj[e.from].push(e.to); adj[e.to].push(e.from); });
+  let total=0; const fmap={};
+  function bfs(){
+    const vis={[src]:true},par={[src]:null},q=[src];
+    while(q.length){ const u=q.shift(); for(const v of(adj[u]||[])){if(!vis[v]&&(rg[u+'>'+v]||0)>0){vis[v]=true;par[v]=u;if(v===snk)return par;q.push(v);}} }
+    return null;
+  }
+  let par;
+  while((par=bfs())){
+    let flow=Infinity,v=snk;
+    while(v!==src){const u=par[v];flow=Math.min(flow,rg[u+'>'+v]||0);v=u;}
+    v=snk;
+    while(v!==src){const u=par[v];rg[u+'>'+v]-=flow;rg[v+'>'+u]=(rg[v+'>'+u]||0)+flow;fmap[u+'-'+v]=(fmap[u+'-'+v]||0)+flow;v=u;}
+    total+=flow;
+  }
+  return {total,fmap};
+}
+
+function runMaxFlow(){
+  const src=document.getElementById('fSrc').value, snk=document.getElementById('fSnk').value;
+  const {total,fmap}=maxFlow(src,snk);
+  highlightPath=[]; flowMap=fmap; draw();
+  const active=Object.entries(fmap).filter(([,v])=>v>0);
+  document.getElementById('fResult').innerHTML=`<strong>Flujo máximo: ${src} → ${snk}</strong><br><br>
+    <strong>Total:</strong> ${total} unidades<br><br>
+    ${active.map(([k,v])=>`<span class="flow-tag">${k.replace('-','→')}:${v}</span>`).join(' ')}`;
+}
+
+function clearAll(){
+  highlightPath=[];flowMap={};selectedNode=null;
+  document.getElementById('dResult').textContent='Selecciona origen y destino.';
+  document.getElementById('fResult').textContent='Selecciona fuente y sumidero.';
+  document.getElementById('nodeInfo').textContent='Haz clic en un nodo.';
+  draw();
+}
+
+function switchAlgo(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('algo-'+name).classList.add('active');
+}
+
+function initSelects(){
+  const ids=NODES.map(n=>n.id);
+  ['dOri','dDest','fSrc','fSnk'].forEach(sid=>{
+    const s=document.getElementById(sid);
+    ids.forEach(id=>{ const o=document.createElement('option'); o.value=id; o.textContent=id; s.appendChild(o); });
+  });
+  document.getElementById('dDest').value='C1';
+  document.getElementById('fSnk').value='C1';
+}
+
+initSelects(); resize();
+setTimeout(()=>{ ox=40; oy=20; scale=0.9; draw(); },100);
+</script>
+</body>
+</html>
